@@ -1,45 +1,63 @@
+Like Repository
+java
+Copy
+Edit
+@Repository
+public interface LikeRepository extends JpaRepository<Like, Long> {
+    void deleteByUserAndPost(User user, Post post);
+    boolean existsByUserAndPost(User user, Post post);
+}
+Like Service
+java
+Copy
+Edit
 @Service
-public class FollowService {
+public class LikeService {
     @Autowired
-    private FollowRepository followRepository;
+    private LikeRepository likeRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private PostRepository postRepository;
 
-    public void followUser(Long followerId, Long followingId) {
-        User follower = userRepository.findById(followerId).orElseThrow(() -> new RuntimeException("Follower not found"));
-        User following = userRepository.findById(followingId).orElseThrow(() -> new RuntimeException("Following not found"));
+    public void likePost(Long userId, Long postId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
 
-        if (!followRepository.existsByFollowerAndFollowing(follower, following)) {
-            Follow follow = new Follow();
-            follow.setFollower(follower);
-            follow.setFollowing(following);
-            followRepository.save(follow);
+        if (!likeRepository.existsByUserAndPost(user, post)) {
+            Like like = new Like();
+            like.setUser(user);
+            like.setPost(post);
+            likeRepository.save(like);
         }
     }
 
-    public void unfollowUser(Long followerId, Long followingId) {
-        User follower = userRepository.findById(followerId).orElseThrow(() -> new RuntimeException("Follower not found"));
-        User following = userRepository.findById(followingId).orElseThrow(() -> new RuntimeException("Following not found"));
+    public void unlikePost(Long userId, Long postId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
 
-        followRepository.deleteByFollowerAndFollowing(follower, following);
+        likeRepository.deleteByUserAndPost(user, post);
     }
 }
-
+Like Controller
+java
+Copy
+Edit
 @RestController
-@RequestMapping("/follow")
-public class FollowController {
+@RequestMapping("/likes")
+public class LikeController {
     @Autowired
-    private FollowService followService;
+    private LikeService likeService;
 
-    @PostMapping("/{followerId}/{followingId}")
-    public ResponseEntity<String> follow(@PathVariable Long followerId, @PathVariable Long followingId) {
-        followService.followUser(followerId, followingId);
-        return ResponseEntity.ok("Followed successfully");
+    @PostMapping("/{userId}/{postId}")
+    public ResponseEntity<String> likePost(@PathVariable Long userId, @PathVariable Long postId) {
+        likeService.likePost(userId, postId);
+        return ResponseEntity.ok("Post liked");
     }
 
-    @DeleteMapping("/{followerId}/{followingId}")
-    public ResponseEntity<String> unfollow(@PathVariable Long followerId, @PathVariable Long followingId) {
-        followService.unfollowUser(followerId, followingId);
-        return ResponseEntity.ok("Unfollowed successfully");
+    @DeleteMapping("/{userId}/{postId}")
+    public ResponseEntity<String> unlikePost(@PathVariable Long userId, @PathVariable Long postId) {
+        likeService.unlikePost(userId, postId);
+        return ResponseEntity.ok("Post unliked");
     }
 }
