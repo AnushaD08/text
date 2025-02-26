@@ -50,3 +50,17 @@ public class GroupService {
         groupMembershipRepository.delete(membership);
     }
 }
+
+
+
+
+
+@Repository
+public interface GroupMembershipRepository extends JpaRepository<GroupMembership, Long> {
+
+    boolean existsByUserAndGroup(User user, Group group);
+
+    Optional<GroupMembership> findByUserAndGroup(User user, Group group);
+
+    void deleteByUserAndGroup(User user, Group group);
+}
