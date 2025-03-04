@@ -1,3 +1,26 @@
+
+fot the the  creating the linebar chart its taking 
+
+one for the the deataind cantain the active order and the inactive order->json includeded the date (in the format of 2025-02-24T09:15:00Z)
+numofactive order
+numberof inactive order
+here the fiter is ->this week,this month,last6 month
+
+how to do it the in the angular 17 stand alone using the highchart
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 4. Implement line-bar-chart.component.ts
 Modify line-bar-chart.component.ts:
 
